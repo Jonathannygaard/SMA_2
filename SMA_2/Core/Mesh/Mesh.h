@@ -16,6 +16,12 @@ struct Vertex
     Vertex(glm::vec3 Pos, glm::vec3 rgb) : Pos(Pos), Color(rgb)
     {
     }
+    Vertex(glm::vec3 pos,glm::vec3 color,glm::vec3 normal)
+        : Pos(pos),
+          Color(color),
+          Normal(normal)
+    {
+    }
 };
 
 struct Triangles
@@ -117,17 +123,26 @@ class Sphere
     glm::vec3 Scale;
     glm::vec3 Rotation;
 
+   
+
 public:    
     Sphere()
     {
     }
+    
+    bool bOnGround = false;
+    
+    glm::vec3 Speed = glm::vec3(0.f);
+
+    std::shared_ptr<Collision> Collider;
 
     glm::vec3& GetPosition() { return Position; }
     glm::vec3& GetScale() { return Scale; }
 
     void CreateSphere(float Radius, int Sectors, int Stacks,glm::vec3 position, glm::vec3 scale, glm::vec3 color);
     void Draw();
-
+    void AddCollider(glm::vec3 scale, ECollisionType collisionType, glm::vec3 offset = glm::vec3(0.f));
+    void Update(float DeltaTime);
     void BindBuffers();
 
     unsigned int VAO;

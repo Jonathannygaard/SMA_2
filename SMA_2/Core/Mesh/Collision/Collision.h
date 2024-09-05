@@ -6,6 +6,8 @@
 
 #define PrintBool(x) std::cout << ((x) ? "True" : "False") << "\n"
 
+
+
 enum class ECollisionType
 {
     Wall,
@@ -17,6 +19,7 @@ enum class ECollisionType
     Collider
 };
 
+class Sphere;
 class Cube;
 
 class Collision
@@ -29,8 +32,10 @@ public:
     ECollisionType collisionType;
 
     Cube* cube;
+    Sphere* sphere;
 
     Collision(glm::vec3 position, glm::vec3 scale, glm::vec3 offset = glm::vec3(0.f),ECollisionType collision_type = ECollisionType::Collider, Cube* realCube = nullptr);
+    Collision(glm::vec3 position, glm::vec3 scale, glm::vec3 offset = glm::vec3(0.f),ECollisionType collision_type = ECollisionType::Collider, Sphere* realSphere = nullptr);
     void UpdatePosition(glm::vec3 position);
     static void checkWorldCollision();
     static void CheckPickupCollisions();

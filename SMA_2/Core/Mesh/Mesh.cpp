@@ -3,6 +3,8 @@
 #include "Mesh.h"
 #include <glad/glad.h>
 #include <iostream>
+#include <windows.h>
+
 #include "../Shader/Shader.h"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtx/transform.hpp"
@@ -131,34 +133,33 @@ void Sphere::CreateSphere(float Radius,int Sectors,int Stacks, glm::vec3 positio
 {
 	Position = position;
 	Scale = scale;
+	
 	float x, y, z, xy;
 	float SectorStep = 2 * glm::pi<float>() / Sectors;
 	float StackStep = glm::pi<float>() / Stacks;
 	float SectorAngle, StackAngle;
 
-	for(int i = 0; i < Stacks; i++)
+	for(int i = 0; i <= Stacks; i++)
 	{
 		StackAngle = glm::pi<float>() / 2 - i * StackStep;
 		float xy = Radius * cos(StackAngle);
 		float z = Radius * sin(StackAngle);
-
-		for(int j = 0; j < Sectors; j++)
+		
+		for(int j = 0; j <= Sectors; j++)
 		{
 			SectorAngle = j * SectorStep;
 
 			float x = xy * cos(SectorAngle);
 			float y = xy * sin(SectorAngle);
-			glm::vec3 Temp(x,y,z);			
-			sVertices.emplace_back(Temp, color);
+			glm::vec3 Temp(x,y,z);
+			if(i == 0 && j != 0)
+			{
+				//continue;
+			}
+				
+			sVertices.emplace_back(Temp, color, Temp);
 		}
-	}
-
-	std::cout << sVertices.size() << std::endl;
-	for (int i = 0; i < sVertices.size(); i++)
-	{
-		std::printf("x: %f, y: %f, z: %f, Vertex: %i\n", sVertices[i].Pos.x, sVertices[i].Pos.y, sVertices[i].Pos.z, i);
-	}
-	
+	}	
 
 	for(int i = 0; i < Stacks; i++)
 	{
@@ -189,6 +190,24 @@ void Sphere::Draw()
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, sIndices.size()*3, GL_UNSIGNED_INT, nullptr);
 	glBindVertexArray(0);
+}
+
+void Sphere::AddCollider(glm::vec3 scale, ECollisionType collisionType, glm::vec3 offset)
+{
+	Collider = std::make_unique<Collision>(GetPosition()+offset,scale, offset,collisionType,this);
+}
+
+void Sphere::Update(float DeltaTime)
+{
+	if(bOnGround)
+	{
+		Speed.y = 0.f;
+		return;
+	}
+	//Collider->UpdatePosition(Position);
+	Speed.y += -9.81 * DeltaTime;
+	Position.y += Speed.y * DeltaTime;
+	
 }
 
 void Sphere::BindBuffers()
@@ -365,8 +384,11 @@ bool Mesh::FindTerrainHeight(glm::vec3& Player)
 			float xCoord = u * p1.x + v * p2.x + w * p3.x;
 			float yCoord = u * p1.y + v * p2.y + w * p3.y;
 			float zCoord = u * p1.z + v * p2.z + w * p3.z;
-			Player.y = yCoord;
-			return true;
+			//Player.y = yCoord;
+			if(player.y <= yCoord)
+			{
+				return true;
+			}
 		}
 	}
 	return false;

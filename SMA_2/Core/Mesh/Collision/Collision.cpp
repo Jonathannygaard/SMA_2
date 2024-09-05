@@ -20,6 +20,15 @@ Collision::Collision(glm::vec3 position, glm::vec3 scale, glm::vec3 offset, ECol
     AllCollision.push_back(std::make_shared<Collision>(*this));
 }
 
+Collision::Collision(glm::vec3 position, glm::vec3 scale, glm::vec3 offset, ECollisionType collision_type,
+    Sphere* realSphere)
+{
+    min = position;
+    max = position + scale;
+    sphere = realSphere;
+    AllCollision.push_back(std::make_shared<Collision>(*this));
+}
+
 void Collision::UpdatePosition(glm::vec3 position)
 {
     min = position;
@@ -30,6 +39,7 @@ void Collision::UpdatePosition(glm::vec3 position)
 
 void Collision::checkWorldCollision()
 {
+    
 }
 
 void Collision::CheckPickupCollisions()
