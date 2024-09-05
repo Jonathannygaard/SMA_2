@@ -109,10 +109,13 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Dependencies\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Dependencies\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -154,7 +157,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Application.cpp" />
+    <ClCompile Include="Core\Camera\Camera.cpp" />
+    <ClCompile Include="Core\Input\Input.cpp" />
+    <ClCompile Include="Core\Mesh\Collision\Collision.cpp" />
+    <ClCompile Include="Core\Mesh\Mesh.cpp" />
+    <ClCompile Include="Core\Mesh\NPC\NPC.cpp" />
+    <ClCompile Include="Core\Shader\Buffers\Buffers.cpp" />
+    <ClCompile Include="Core\Shader\Shader.cpp" />
+    <ClCompile Include="Core\Window\Window.cpp" />
+    <ClCompile Include="glad.c" />
     <ClCompile Include="SMA_2.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Core\Application.h" />
+    <ClInclude Include="Core\Camera\Camera.h" />
+    <ClInclude Include="Core\Color.h" />
+    <ClInclude Include="Core\Input\Input.h" />
+    <ClInclude Include="Core\Mesh\Collision\Collision.h" />
+    <ClInclude Include="Core\Mesh\Mesh.h" />
+    <ClInclude Include="Core\Mesh\NPC\NPC.h" />
+    <ClInclude Include="Core\Shader\Buffers\Buffers.h" />
+    <ClInclude Include="Core\Shader\Shader.h" />
+    <ClInclude Include="Core\Window\Window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Core\Shader\FragmentShader.frag" />
+    <Content Include="Core\Shader\FragmentShader.shader" />
+    <Content Include="Core\Shader\VertexShader.shader" />
+    <Content Include="Core\Shader\VertexShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
