@@ -76,7 +76,7 @@ void Cube::Draw()
 {
 	glm::mat4 model = glm::mat4(1.f);
 	model = glm::translate(model, GetPosition());
-	//model = glm::scale(model, cube->GetScale());
+	model = glm::scale(model, GetScale());
 	glUniformMatrix4fv(glGetUniformLocation(Shader::Program, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(model));
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, cIndices.size()*3, GL_UNSIGNED_INT, nullptr);
@@ -127,37 +127,44 @@ void Cube::BindBuffers()
 	glBindVertexArray(0);
 }
 
-void Sphere::CreateSphere(float Radius,int Sectors,int Stacks, glm::vec3 position, glm::vec3 color)
+void Sphere::CreateSphere(float Radius,int Sectors,int Stacks, glm::vec3 position, glm::vec3 scale, glm::vec3 color)
 {
+	Position = position;
+	Scale = scale;
+	float x, y, z, xy;
 	float SectorStep = 2 * glm::pi<float>() / Sectors;
 	float StackStep = glm::pi<float>() / Stacks;
 	float SectorAngle, StackAngle;
 
-	for(int i = 0; i >= Stacks; i++)
+	for(int i = 0; i < Stacks; i++)
 	{
 		StackAngle = glm::pi<float>() / 2 - i * StackStep;
 		float xy = Radius * cos(StackAngle);
 		float z = Radius * sin(StackAngle);
 
-		for(int j = 0; j >= Sectors; j++)
+		for(int j = 0; j < Sectors; j++)
 		{
 			SectorAngle = j * SectorStep;
 
 			float x = xy * cos(SectorAngle);
 			float y = xy * sin(SectorAngle);
-
-			glm::vec3 Temp(x, y, z);
-			Temp += position;
-			Position = position;
+			glm::vec3 Temp(x,y,z);			
 			sVertices.emplace_back(Temp, color);
 		}
 	}
+
+	std::cout << sVertices.size() << std::endl;
+	for (int i = 0; i < sVertices.size(); i++)
+	{
+		std::printf("x: %f, y: %f, z: %f, Vertex: %i\n", sVertices[i].Pos.x, sVertices[i].Pos.y, sVertices[i].Pos.z, i);
+	}
+	
 
 	for(int i = 0; i < Stacks; i++)
 	{
 		int k1 = i * (Sectors + 1);
 		int k2 = k1 + Sectors + 1;
-
+	
 		for(int j = 0; j < Sectors; j++, k1++, k2++)
 		{
 			if(i != 0)
@@ -170,12 +177,14 @@ void Sphere::CreateSphere(float Radius,int Sectors,int Stacks, glm::vec3 positio
 			}
 		}
 	}
+BindBuffers();	
 }
 
 void Sphere::Draw()
 {
 	glm::mat4 model = glm::mat4(1.f);
 	model = glm::translate(model, GetPosition());
+	model = glm::scale(model, GetScale());
 	glUniformMatrix4fv(glGetUniformLocation(Shader::Program, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(model));
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, sIndices.size()*3, GL_UNSIGNED_INT, nullptr);
@@ -285,7 +294,7 @@ void Mesh::CreateTerrain(float xStart, float yStart, float xEnd, float yEnd, flo
 			{
 				zLength++;
 			}
-			mVertices.emplace_back(glm::vec3(i, 1.f, j), Color::Coral);
+			mVertices.emplace_back(glm::vec3(i, 0.f, j), Color::Coral);
 		}
 	}
 	float index = 1;

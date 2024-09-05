@@ -36,6 +36,17 @@ void KeyBoardInput::processInput(GLFWwindow* window, Cube* player)
 		player->GetPosition() += (Application::mCamera.cameraSpeed * glm::normalize(glm::cross(Application::mCamera.cameraFront, Application::mCamera.cameraUp))) * Application::DeltaTime;
 		Application::mCamera.setPlayerPos(player->GetPosition());
 	}
+	if(glfwGetKey(window, GLFW_KEY_E)==GLFW_PRESS)
+	{
+		player->GetPosition().y += Application::mCamera.cameraSpeed * Application::DeltaTime;
+		Application::mCamera.setPlayerPos(player->GetPosition());
+	}
+	if(glfwGetKey(window, GLFW_KEY_Q)==GLFW_PRESS)
+	{
+		player->GetPosition().y -= Application::mCamera.cameraSpeed * Application::DeltaTime;
+		Application::mCamera.setPlayerPos(player->GetPosition());
+	}
+	
 }
 
 namespace MouseInput

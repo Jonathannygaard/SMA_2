@@ -37,7 +37,7 @@ void Application::create() {
 		glm::vec3(0.75f, 1.3f, 0.75f), Color::Purple);
 	Player.bIsPlayer = true;
 
-	Sphere.CreateSphere(1.f,36,36, glm::vec3(2.f,1.f,2.f), Color::Red);
+	Sphere.CreateSphere(1.f,8,8, glm::vec3(0.f,10.f,0.f), glm::vec3(10.f), Color::Red);
 
 	Terrain.CreateTerrain(-20,-20,20,20, 0.15);
 	Terrain.isTarrain = true;
@@ -45,7 +45,7 @@ void Application::create() {
 
 void Application::update() {
 	
-	Terrain.FindTerrainHeight(Player.GetPosition());
+	//Terrain.FindTerrainHeight(Player.GetPosition());
 
 	mCamera.OrbitCamera();
 }

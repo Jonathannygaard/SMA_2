@@ -117,16 +117,15 @@ class Sphere
     glm::vec3 Scale;
     glm::vec3 Rotation;
 
-
-
 public:    
     Sphere()
     {
     }
 
     glm::vec3& GetPosition() { return Position; }
+    glm::vec3& GetScale() { return Scale; }
 
-    void CreateSphere(float Radius, int Sectors, int Stacks,glm::vec3 position, glm::vec3 color);
+    void CreateSphere(float Radius, int Sectors, int Stacks,glm::vec3 position, glm::vec3 scale, glm::vec3 color);
     void Draw();
 
     void BindBuffers();
