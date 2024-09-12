@@ -34,25 +34,50 @@ void Application::create() {
 		glm::vec3(0.75f, 1.3f, 0.75f), Color::Purple);
 	Player.bIsPlayer = true;
 
-	Sphere.CreateSphere(1.f,16,16, glm::vec3(0.f,10.f,0.f), glm::vec3(1.f), Color::Green);
+	sphere.CreateSphere(1.f, 1.f,16,16, glm::vec3(0.f,5.f,0.f), glm::vec3(1.f), Color::Green);
+	sphere.AddCollider(1.f, ECollisionType::Sphere, glm::vec3(0.f));
 
-	Terrain.CreateTerrain(-20,-20,20,20, 0.15);
-	Terrain.isTarrain = true;
+	sphere2.CreateSphere(1.f,1.f,16,16, glm::vec3(10.f,1.f,0.f), glm::vec3(1.f), Color::Yellow);
+	sphere2.AddCollider(1.f, ECollisionType::Sphere, glm::vec3(0.f));
+
+	Floor.CreateCube(glm::vec3(-20.f,-0.5f,10.f), glm::vec3(40.f, 0.5f, 20.f), Color::Olive);
+	Floor.AddCollider(glm::vec3(40.f, 0.5f, 20.f), ECollisionType::Wall, glm::vec3(0.f));
+
+	Wall.CreateCube(glm::vec3(20.f,0.f,10.f), glm::vec3(1.f, 2.f, 20.f), Color::Red);
+	Wall.AddCollider(glm::vec3(1.f,2.f,20.f), ECollisionType::Wall, glm::vec3(0.f));
+
+	Wall2.CreateCube(glm::vec3(20.f,0.f,10.f), glm::vec3(-40.f, 2.f, 1.f), Color::Red);
+	Wall2.AddCollider(glm::vec3(-40.f, 2.f, 1.f), ECollisionType::Wall, glm::vec3(0.f));
+
+	Wall3.CreateCube(glm::vec3(-20.f,0.f,10.f), glm::vec3(1.f, 2.f, 20.f), Color::Red);
+	Wall3.AddCollider(glm::vec3(1.f, 2.f, 20.f), ECollisionType::Wall, glm::vec3(0.f));
+
+	Wall4.CreateCube(glm::vec3(-20.f,0.f,-10.f), glm::vec3(40.f, 2.f, 1.f), Color::Red);
+	Wall4.AddCollider(glm::vec3(40.f, 2.f, 1.f), ECollisionType::Wall, glm::vec3(0.f));
+	
 }
 
 void Application::update() {
-	glm::vec3 SpherePos = Sphere.GetPosition() - glm::vec3(0, Sphere.GetScale().y, 0);
-	if(Terrain.FindTerrainHeight(SpherePos))
+	Floor.Collider->checkCollision(*sphere.Collider);
+	for(auto s : Mesh::AllSpheres)
 	{
-		Sphere.bOnGround = true;
+		for (auto s2 : Mesh::AllSpheres)
+		{
+			if(s != s2)
+			{
+				s->Collider->checkSphereCollision(*s2->Collider);
+			}
+			s->Update(DeltaTime);
+		}
 	}
-	Sphere.Update(DeltaTime);
 	mCamera.OrbitCamera();
 }
 
 void Application::run() {
 	create();
 	float FirstFrame = 0.0f;
+
+	sphere.Speed = glm::vec3(2.f, 0.f, 0.f);
 
 	glm::vec3 color(Color::Blue);
 	while(!glfwWindowShouldClose(mWindow))
@@ -71,7 +96,13 @@ void Application::run() {
 		
 		Player.Draw();
 		Terrain.Draw();
-		Sphere.Draw();
+		sphere.Draw();
+		sphere2.Draw();
+		Floor.Draw();
+		Wall.Draw();
+		Wall2.Draw();
+		Wall3.Draw();
+		Wall4.Draw();
 
 		KeyBoardInput::processInput(mWindow, &Player);
 

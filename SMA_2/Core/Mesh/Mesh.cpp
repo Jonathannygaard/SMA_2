@@ -10,7 +10,7 @@
 #include "glm/gtx/transform.hpp"
 #include "../Color.h"
 
-
+std::vector<Sphere*> Mesh::AllSpheres;
 
 void Cube::CreateCube(glm::vec3 position, glm::vec3 scale, glm::vec3 color, bool isPickup, bool isPlayer, glm::vec3 rotation, bool isDoor)
 {
@@ -129,10 +129,12 @@ void Cube::BindBuffers()
 	glBindVertexArray(0);
 }
 
-void Sphere::CreateSphere(float Radius,int Sectors,int Stacks, glm::vec3 position, glm::vec3 scale, glm::vec3 color)
+void Sphere::CreateSphere(float radius,float mass, int Sectors,int Stacks, glm::vec3 position, glm::vec3 scale, glm::vec3 color)
 {
 	Position = position;
 	Scale = scale;
+	Radius = radius;
+	Mass = mass;
 	
 	float x, y, z, xy;
 	float SectorStep = 2 * glm::pi<float>() / Sectors;
@@ -142,8 +144,8 @@ void Sphere::CreateSphere(float Radius,int Sectors,int Stacks, glm::vec3 positio
 	for(int i = 0; i <= Stacks; i++)
 	{
 		StackAngle = glm::pi<float>() / 2 - i * StackStep;
-		float xy = Radius * cos(StackAngle);
-		float z = Radius * sin(StackAngle);
+		float xy = radius * cos(StackAngle);
+		float z = radius * sin(StackAngle);
 		
 		for(int j = 0; j <= Sectors; j++)
 		{
@@ -178,7 +180,8 @@ void Sphere::CreateSphere(float Radius,int Sectors,int Stacks, glm::vec3 positio
 			}
 		}
 	}
-BindBuffers();	
+	Mesh::AllSpheres.push_back(this);
+	BindBuffers();	
 }
 
 void Sphere::Draw()
@@ -192,22 +195,16 @@ void Sphere::Draw()
 	glBindVertexArray(0);
 }
 
-void Sphere::AddCollider(glm::vec3 scale, ECollisionType collisionType, glm::vec3 offset)
+void Sphere::AddCollider(float radius, ECollisionType collisionType, glm::vec3 offset)
 {
-	Collider = std::make_unique<Collision>(GetPosition()+offset,scale, offset,collisionType,this);
+	Collider = std::make_unique<Collision>(GetPosition()+offset,radius, offset,collisionType,this);
 }
 
 void Sphere::Update(float DeltaTime)
 {
-	if(bOnGround)
-	{
-		Speed.y = 0.f;
-		return;
-	}
-	//Collider->UpdatePosition(Position);
-	Speed.y += -9.81 * DeltaTime;
-	Position.y += Speed.y * DeltaTime;
-	
+	Speed.y += -9.81f * DeltaTime;
+	Position += Speed * DeltaTime;
+	Collider->UpdatePosition(Position);
 }
 
 void Sphere::BindBuffers()

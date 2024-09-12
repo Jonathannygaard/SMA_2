@@ -16,7 +16,8 @@ enum class ECollisionType
     Player,
     NPC,
     NoCollision,
-    Collider
+    Collider,
+    Sphere
 };
 
 class Sphere;
@@ -27,6 +28,7 @@ class Collision
 public:
     glm::vec3 min;
     glm::vec3 max;
+    float Radius;
     glm::vec3 scale;
     glm::vec3 offset;
     ECollisionType collisionType;
@@ -35,15 +37,20 @@ public:
     Sphere* sphere;
 
     Collision(glm::vec3 position, glm::vec3 scale, glm::vec3 offset = glm::vec3(0.f),ECollisionType collision_type = ECollisionType::Collider, Cube* realCube = nullptr);
-    Collision(glm::vec3 position, glm::vec3 scale, glm::vec3 offset = glm::vec3(0.f),ECollisionType collision_type = ECollisionType::Collider, Sphere* realSphere = nullptr);
+    Collision(glm::vec3 position, float radius, glm::vec3 offset = glm::vec3(0.f),ECollisionType collision_type = ECollisionType::Collider, Sphere* realSphere = nullptr);
     void UpdatePosition(glm::vec3 position);
     static void checkWorldCollision();
     static void CheckPickupCollisions();
     bool checkCollision(Collision& other);
+    bool checkSphereCollision(Collision& other);
+    void resolveCollision(Collision& other);
+    void resolveSphereCollision(Collision& other);
     glm::vec3 lerp(glm::vec3& a, glm::vec3 b, float f);
-
-private:
+    
     static std::vector<std::shared_ptr<Collision>> AllCollision;
+    static std::vector<std::shared_ptr<Collision>> AllSphereCollision;
+private:
+    
     bool bIsCameraLock = false;
     bool HasOverlapped = false;
     float timer = 0.f;

@@ -44,6 +44,7 @@ public:
     std::vector<GLuint> mIndices;
     std::vector<Triangles> tIndices;
     std::vector<std::shared_ptr<Cube>> Package;
+    static std::vector<Sphere*> AllSpheres;
 
 	bool isTarrain = false;
     bool isLine = false;
@@ -122,7 +123,6 @@ class Sphere
     glm::vec3 Position;
     glm::vec3 Scale;
     glm::vec3 Rotation;
-
    
 
 public:    
@@ -131,7 +131,8 @@ public:
     }
     
     bool bOnGround = false;
-    
+    float Radius;
+    float Mass;
     glm::vec3 Speed = glm::vec3(0.f);
 
     std::shared_ptr<Collision> Collider;
@@ -139,9 +140,9 @@ public:
     glm::vec3& GetPosition() { return Position; }
     glm::vec3& GetScale() { return Scale; }
 
-    void CreateSphere(float Radius, int Sectors, int Stacks,glm::vec3 position, glm::vec3 scale, glm::vec3 color);
+    void CreateSphere(float radius,float mass, int Sectors, int Stacks,glm::vec3 position, glm::vec3 scale, glm::vec3 color);
     void Draw();
-    void AddCollider(glm::vec3 scale, ECollisionType collisionType, glm::vec3 offset = glm::vec3(0.f));
+    void AddCollider(float radius, ECollisionType collisionType, glm::vec3 offset = glm::vec3(0.f));
     void Update(float DeltaTime);
     void BindBuffers();
 

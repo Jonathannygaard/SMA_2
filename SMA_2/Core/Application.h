@@ -22,7 +22,14 @@ public:
     
     Cube Player;
     Mesh Terrain;
-    Sphere Sphere;
+    Sphere sphere;
+    Sphere sphere2;
+
+    Cube Floor;
+    Cube Wall;
+    Cube Wall2;
+    Cube Wall3;
+    Cube Wall4;
 
   
 
