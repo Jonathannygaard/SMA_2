@@ -45,6 +45,7 @@ public:
     std::vector<Triangles> tIndices;
     std::vector<std::shared_ptr<Cube>> Package;
     static std::vector<Sphere*> AllSpheres;
+    static std::vector<Cube*> AllCubes;
 
 	bool isTarrain = false;
     bool isLine = false;
@@ -143,7 +144,7 @@ public:
     void CreateSphere(float radius,float mass, int Sectors, int Stacks,glm::vec3 position, glm::vec3 scale, glm::vec3 color);
     void Draw();
     void AddCollider(float radius, ECollisionType collisionType, glm::vec3 offset = glm::vec3(0.f));
-    void Update(float DeltaTime);
+    void Update();
     void BindBuffers();
 
     unsigned int VAO;

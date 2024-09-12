@@ -43,7 +43,7 @@ public:
     static void CheckPickupCollisions();
     bool checkCollision(Collision& other);
     bool checkSphereCollision(Collision& other);
-    void resolveCollision(Collision& other);
+    void resolveCollision(Collision& other, glm::vec3 normal);
     void resolveSphereCollision(Collision& other);
     glm::vec3 lerp(glm::vec3& a, glm::vec3 b, float f);
     

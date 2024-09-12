@@ -30,15 +30,24 @@ void Application::init() {
 void Application::create() {
 
 	// Player
-	Player.CreateCube(glm::vec3(0.f, 0.f, 0.f), 
-		glm::vec3(0.75f, 1.3f, 0.75f), Color::Purple);
+	Player.CreateCube(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.75f, 1.3f, 0.75f), Color::Purple);
 	Player.bIsPlayer = true;
+	Player.AddCollider(glm::vec3(0.75f, 1.3f, 0.75f), ECollisionType::Player, glm::vec3(0.f));
 
-	sphere.CreateSphere(1.f, 1.f,16,16, glm::vec3(0.f,5.f,0.f), glm::vec3(1.f), Color::Green);
+	sphere.CreateSphere(1.f, 1.f,16,16, glm::vec3(-10.f,10.f,0.f), glm::vec3(1.f), Color::Green);
 	sphere.AddCollider(1.f, ECollisionType::Sphere, glm::vec3(0.f));
-
-	sphere2.CreateSphere(1.f,1.f,16,16, glm::vec3(10.f,1.f,0.f), glm::vec3(1.f), Color::Yellow);
+	
+	sphere2.CreateSphere(1.f,1.f,16,16, glm::vec3(10.f,10.f,0.f), glm::vec3(1.f), Color::Yellow);
 	sphere2.AddCollider(1.f, ECollisionType::Sphere, glm::vec3(0.f));
+
+	sphere3.CreateSphere(1.f,1.f,16,16, glm::vec3(5.f,10.f,1.f), glm::vec3(1.f), Color::Cyan);
+	sphere3.AddCollider(1.f, ECollisionType::Sphere, glm::vec3(0.f));
+
+	sphere4.CreateSphere(1.f,1.f,16,16, glm::vec3(0.f,10.f,5.f), glm::vec3(1.f), Color::Brown);
+	sphere4.AddCollider(1.f, ECollisionType::Sphere, glm::vec3(0.f));
+
+	sphere5.CreateSphere(1.f,1.f,16,16, glm::vec3(3.f,10.f,7.f), glm::vec3(1.f), Color::Pink);
+	sphere5.AddCollider(1.f, ECollisionType::Sphere, glm::vec3(0.f));
 
 	Floor.CreateCube(glm::vec3(-20.f,-0.5f,10.f), glm::vec3(40.f, 0.5f, 20.f), Color::Olive);
 	Floor.AddCollider(glm::vec3(40.f, 0.5f, 20.f), ECollisionType::Wall, glm::vec3(0.f));
@@ -46,8 +55,8 @@ void Application::create() {
 	Wall.CreateCube(glm::vec3(20.f,0.f,10.f), glm::vec3(1.f, 2.f, 20.f), Color::Red);
 	Wall.AddCollider(glm::vec3(1.f,2.f,20.f), ECollisionType::Wall, glm::vec3(0.f));
 
-	Wall2.CreateCube(glm::vec3(20.f,0.f,10.f), glm::vec3(-40.f, 2.f, 1.f), Color::Red);
-	Wall2.AddCollider(glm::vec3(-40.f, 2.f, 1.f), ECollisionType::Wall, glm::vec3(0.f));
+	Wall2.CreateCube(glm::vec3(-20.f,0.f,10.f), glm::vec3(40.f, 2.f, 1.f), Color::Red);
+	Wall2.AddCollider(glm::vec3(40.f, 2.f, 1.f), ECollisionType::Wall, glm::vec3(0.f));
 
 	Wall3.CreateCube(glm::vec3(-20.f,0.f,10.f), glm::vec3(1.f, 2.f, 20.f), Color::Red);
 	Wall3.AddCollider(glm::vec3(1.f, 2.f, 20.f), ECollisionType::Wall, glm::vec3(0.f));
@@ -58,7 +67,22 @@ void Application::create() {
 }
 
 void Application::update() {
-	Floor.Collider->checkCollision(*sphere.Collider);
+	for (auto c : Mesh::AllCubes)
+	{
+		c->Collider->UpdatePosition(c->GetPosition());
+		if(c->Collider == nullptr)
+		{
+			continue;
+		}
+		for (auto s : Mesh::AllSpheres)
+		{
+			if(c == nullptr || s == nullptr)
+			{
+				continue;
+			}
+			c->Collider->checkCollision(*s->Collider);
+		}
+	}
 	for(auto s : Mesh::AllSpheres)
 	{
 		for (auto s2 : Mesh::AllSpheres)
@@ -67,7 +91,7 @@ void Application::update() {
 			{
 				s->Collider->checkSphereCollision(*s2->Collider);
 			}
-			s->Update(DeltaTime);
+			s->Update();
 		}
 	}
 	mCamera.OrbitCamera();
@@ -76,8 +100,6 @@ void Application::update() {
 void Application::run() {
 	create();
 	float FirstFrame = 0.0f;
-
-	sphere.Speed = glm::vec3(2.f, 0.f, 0.f);
 
 	glm::vec3 color(Color::Blue);
 	while(!glfwWindowShouldClose(mWindow))
@@ -94,15 +116,18 @@ void Application::run() {
 		glUniformMatrix4fv(mCamera.projectionLoc, 1, GL_FALSE, glm::value_ptr(mCamera.getProjection(Window::Width, Window::Height)));
 		glUniformMatrix4fv(mCamera.viewLoc, 1, GL_FALSE, glm::value_ptr(mCamera.getView()));
 		
-		Player.Draw();
-		Terrain.Draw();
-		sphere.Draw();
-		sphere2.Draw();
-		Floor.Draw();
-		Wall.Draw();
-		Wall2.Draw();
-		Wall3.Draw();
-		Wall4.Draw();
+		for(auto s : Mesh::AllSpheres)
+		{
+			s->Draw();
+		}
+		for(auto c : Mesh::AllCubes)
+		{
+			if(!c->bIsPlayer)
+			{
+				
+			}
+			c->Draw();
+		}
 
 		KeyBoardInput::processInput(mWindow, &Player);
 

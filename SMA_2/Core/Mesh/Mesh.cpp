@@ -5,12 +5,14 @@
 #include <iostream>
 #include <windows.h>
 
+#include "../Application.h"
 #include "../Shader/Shader.h"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtx/transform.hpp"
 #include "../Color.h"
 
 std::vector<Sphere*> Mesh::AllSpheres;
+std::vector<Cube*> Mesh::AllCubes;
 
 void Cube::CreateCube(glm::vec3 position, glm::vec3 scale, glm::vec3 color, bool isPickup, bool isPlayer, glm::vec3 rotation, bool isDoor)
 {
@@ -70,7 +72,7 @@ void Cube::CreateCube(glm::vec3 position, glm::vec3 scale, glm::vec3 color, bool
 		cVertices[Triangles.b].Normal += Normal;
 		cVertices[Triangles.c].Normal += Normal;
 	}
-
+	Mesh::AllCubes.push_back(this);
 	BindBuffers();
 }
 
@@ -200,10 +202,10 @@ void Sphere::AddCollider(float radius, ECollisionType collisionType, glm::vec3 o
 	Collider = std::make_unique<Collision>(GetPosition()+offset,radius, offset,collisionType,this);
 }
 
-void Sphere::Update(float DeltaTime)
+void Sphere::Update()
 {
-	Speed.y += -9.81f * DeltaTime;
-	Position += Speed * DeltaTime;
+	Speed.y += -9.81f * Application::DeltaTime;
+	Position += Speed * Application::DeltaTime;
 	Collider->UpdatePosition(Position);
 }
 

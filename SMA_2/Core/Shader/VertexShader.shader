@@ -16,5 +16,5 @@ void main()
     gl_Position = projection * view * modelMatrix * vec4(aPos, 1.0);
     Color = aColor;
     Normal = aNormal;
-    FragPos = vec3(vec4(aPos,1)*modelMatrix);
+    FragPos = vec3(modelMatrix * vec4(aPos,1));
 } 

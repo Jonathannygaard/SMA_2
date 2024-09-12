@@ -74,20 +74,15 @@ void Collision::CheckPickupCollisions()
 bool Collision::checkCollision(Collision& other)
 {
     if(other.collisionType == ECollisionType::Sphere)
-    {
-        if(cube == nullptr && other.sphere == nullptr)
+    { 
+        glm::vec3 closestPoint = glm::clamp(other.min, min, max);
+        closestPoint.z = glm::clamp (other.min.z, max.z, min.z);
+        float distance = glm::distance(closestPoint, other.min);
+        if(distance <= other.Radius)
         {
-            return false;
-        }
-                     
-        if(min.x < other.min.x - other.Radius &&
-            max.x > other.min.x + other.Radius &&
-            min.y < other.min.y + other.Radius &&
-            max.y > other.min.y - other.Radius &&
-            min.z > other.min.z + other.Radius &&
-            max.z < other.min.z - other.Radius)
-        {
-            resolveCollision(other);
+            std::cout << "Collision" << std::endl;
+            other.sphere->GetPosition() = closestPoint + (other.Radius * glm::normalize(other.min - closestPoint));
+            resolveCollision(other, normalize(other.min - closestPoint));
             return true;
         }
     }
@@ -107,11 +102,10 @@ bool Collision::checkSphereCollision(Collision& other)
     return false;
 }
 
-void Collision::resolveCollision(Collision& other)
+void Collision::resolveCollision(Collision& other, glm::vec3 normal)
 {
-    glm::vec3 floorNormal = glm::vec3(0.f, 1.f, 0.f);
     glm::vec3 relativeVelocity = other.sphere->Speed;
-    float VelosityAlongNormal = glm::dot(relativeVelocity, floorNormal);
+    float VelosityAlongNormal = glm::dot(relativeVelocity, normal);
 
     if(VelosityAlongNormal > 0)
         return;
@@ -119,8 +113,9 @@ void Collision::resolveCollision(Collision& other)
     float restitutuin = 1.f;
     float impulse = (-(1 + restitutuin) * VelosityAlongNormal) / (1 / other.sphere->Mass);
 
-    glm::vec3 impulseVector = impulse * floorNormal;
-    other.sphere->Speed += impulseVector / other.sphere->Mass;
+    float forceKept = 0.9f;
+    glm::vec3 impulseVector = impulse * normal;
+    other.sphere->Speed += (impulseVector / other.sphere->Mass) * forceKept;
 }
 
 void Collision::resolveSphereCollision(Collision& other)

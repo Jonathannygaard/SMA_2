@@ -21,9 +21,12 @@ public:
     static float DeltaTime;
     
     Cube Player;
-    Mesh Terrain;
+    
     Sphere sphere;
     Sphere sphere2;
+    Sphere sphere3;
+    Sphere sphere4;
+    Sphere sphere5;
 
     Cube Floor;
     Cube Wall;
