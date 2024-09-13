@@ -67,7 +67,7 @@ bool Collision::checkCollision(Collision& other)
             }
         }
     }
-    if(other.collisionType == ECollisionType::Sphere)
+    if(other.collisionType == ECollisionType::Sphere && collisionType != ECollisionType::Interact)
     { 
         glm::vec3 closestPoint = glm::clamp(other.min, min, max);
         closestPoint.z = glm::clamp (other.min.z, max.z, min.z);
