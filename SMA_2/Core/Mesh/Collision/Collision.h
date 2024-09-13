@@ -11,7 +11,7 @@
 enum class ECollisionType
 {
     Wall,
-    Pickup,
+    Interact,
     Door,
     Player,
     NPC,

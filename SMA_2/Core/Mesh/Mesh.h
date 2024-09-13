@@ -83,7 +83,7 @@ public:
     {
     }
     bool bIsPlayer = false;
-    bool bCanInteract = false;
+    bool bInteracted = false;
     bool bIsPickup = false;
     bool bShouldRender = true;
     bool bIsDoor = false;
@@ -97,7 +97,8 @@ public:
     void CreateCube(glm::vec3 position, glm::vec3 scale, glm::vec3 color, bool isPickup = false, bool isPlayer = false, glm::vec3 rotation = glm::vec3(0.f), bool isDoor = false);
     void Draw();
 
-    std::shared_ptr<Collision> Collider;
+    std::vector<std::shared_ptr<Collision>> Colliders;
+    //std::shared_ptr<Collision> Collider;
     glm::vec3& GetPosition() { return Position; }
     glm::vec3& GetScale() { return Scale; }
     glm::vec3& GetRotation() { return Rotation; }

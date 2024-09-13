@@ -90,7 +90,7 @@ void Cube::Draw()
 
 void Cube::AddCollider(glm::vec3 scale, ECollisionType collisionType, glm::vec3 offset)
 {
-	Collider = std::make_unique<Collision>(GetPosition()+offset,scale, offset,collisionType,this);
+	Colliders.push_back(std::make_unique<Collision>(GetPosition(),scale, offset,collisionType,this));
 }
 
 void Cube::MoveNPC(Cube& NPC, glm::vec3 pos)
@@ -199,7 +199,7 @@ void Sphere::Draw()
 
 void Sphere::AddCollider(float radius, ECollisionType collisionType, glm::vec3 offset)
 {
-	Collider = std::make_unique<Collision>(GetPosition()+offset,radius, offset,collisionType,this);
+	Collider = std::make_unique<Collision>(GetPosition(),radius, offset,collisionType,this);
 }
 
 void Sphere::Update()

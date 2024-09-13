@@ -33,6 +33,8 @@ void Application::create() {
 	Player.CreateCube(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.75f, 1.3f, 0.75f), Color::Purple);
 	Player.bIsPlayer = true;
 	Player.AddCollider(glm::vec3(0.75f, 1.3f, 0.75f), ECollisionType::Player, glm::vec3(0.f));
+	Player.AddCollider(glm::vec3(1.75f, 1.55f, 1.75f), ECollisionType::Interact, glm::vec3(-0.5f));
+	MouseInput::player = &Player;
 
 	sphere.CreateSphere(1.f, 1.f,16,16, glm::vec3(-10.f,10.f,0.f), glm::vec3(1.f), Color::Green);
 	sphere.AddCollider(1.f, ECollisionType::Sphere, glm::vec3(0.f));
@@ -67,25 +69,29 @@ void Application::create() {
 }
 
 void Application::update() {
-	for (auto c : Mesh::AllCubes)
+	for (Cube* c : Mesh::AllCubes)
 	{
-		c->Collider->UpdatePosition(c->GetPosition());
-		if(c->Collider == nullptr)
+		for(std::shared_ptr<Collision> Collider: c->Colliders)
 		{
-			continue;
-		}
-		for (auto s : Mesh::AllSpheres)
-		{
-			if(c == nullptr || s == nullptr)
+			Collider->UpdatePosition(c->GetPosition());
+			if(Collider == nullptr)
 			{
 				continue;
 			}
-			c->Collider->checkCollision(*s->Collider);
+			for (Sphere* s : Mesh::AllSpheres)
+			{
+				if(c == nullptr || s == nullptr)
+				{
+					continue;
+				}
+				Collider->checkCollision(*s->Collider);
+			}
 		}
+		
 	}
-	for(auto s : Mesh::AllSpheres)
+	for(Sphere* s : Mesh::AllSpheres)
 	{
-		for (auto s2 : Mesh::AllSpheres)
+		for (Sphere* s2 : Mesh::AllSpheres)
 		{
 			if(s != s2)
 			{

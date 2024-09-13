@@ -1,6 +1,7 @@
 #include "Input.h"
 #include <iostream>
 #include "../Application.h"
+#include "../Window/Window.h"
 #include "GLFW/glfw3.h"
 
 void Input::framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -46,7 +47,6 @@ void KeyBoardInput::processInput(GLFWwindow* window, Cube* player)
 		player->GetPosition().y -= Application::mCamera.cameraSpeed * Application::DeltaTime;
 		Application::mCamera.setPlayerPos(player->GetPosition());
 	}
-	
 }
 
 namespace MouseInput
@@ -57,6 +57,8 @@ namespace MouseInput
 	float yaw = -90.f;
 	float pitch = 0.f;
 	float fov = 45.f;
+
+	Cube* player = nullptr;
 }
 
 
@@ -89,5 +91,21 @@ void MouseInput::mouse_callback(GLFWwindow* window, double xpos, double ypos)
 		direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 		Application::mCamera.cameraFront = glm::normalize(direction);
 	}
+}
 
+void MouseInput::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	switch (button)
+	{
+	case GLFW_MOUSE_BUTTON_LEFT:
+		if (action == GLFW_PRESS)
+		{
+			player->bInteracted = true;
+		}
+		else
+		{
+			player->bInteracted = false;
+		}
+		break;
+	}
 }

@@ -13,7 +13,7 @@ std::vector<std::shared_ptr<Collision>> Collision::AllSphereCollision;
 
 Collision::Collision(glm::vec3 position, glm::vec3 scale, glm::vec3 offset, ECollisionType collision_type, Cube* realCube) : scale(scale), offset(offset), collisionType(collision_type)
 {
-    min = position;
+    min = position + offset;
     max = position + scale;
     max.z = position.z - scale.z;
     collisionType = collision_type;
@@ -24,7 +24,7 @@ Collision::Collision(glm::vec3 position, glm::vec3 scale, glm::vec3 offset, ECol
 Collision::Collision(glm::vec3 position, float radius, glm::vec3 offset, ECollisionType collision_type,
     Sphere* realSphere)
 {
-    min = position;
+    min = position + offset;
     Radius = radius;
     sphere = realSphere;
     collisionType = collision_type;
@@ -35,10 +35,10 @@ void Collision::UpdatePosition(glm::vec3 position)
 {
     if(collisionType == ECollisionType::Sphere)
     {
-        min = position;
+        min = position + offset;
         return;
     }
-    min = position;
+    min = position + offset;
     max = position + scale;
     max.z = position.z - scale.z;
 }
@@ -49,30 +49,24 @@ void Collision::checkWorldCollision()
     
 }
 
-void Collision::CheckPickupCollisions()
-{
-    for(auto& player : AllCollision)
-    {
-        if(player->cube)
-        {
-            if (player->cube->bIsPlayer)
-            {
-                for (auto& element : AllCollision)
-                {
-                    if (element->collisionType == ECollisionType::Pickup)
-                    {
-                        player->checkCollision(*element);
-                    }
-                }
-                break;
-            }
-        }
-
-    }
-}
-
 bool Collision::checkCollision(Collision& other)
 {
+    if(collisionType == ECollisionType::Interact && other.collisionType == ECollisionType::Sphere)
+    {
+        glm::vec3 closestPoint = glm::clamp(other.min, min, max);
+        closestPoint.z = glm::clamp (other.min.z, max.z, min.z);
+        float distance = glm::distance(closestPoint, other.min);
+        if(distance <= other.Radius)
+        {
+            if(cube->bInteracted)
+            {
+                glm::vec3 normal = glm::normalize(other.min - closestPoint);
+                float Impulse = 5.f;
+                other.sphere->Speed = normal * Impulse;
+                return true;
+            }
+        }
+    }
     if(other.collisionType == ECollisionType::Sphere)
     { 
         glm::vec3 closestPoint = glm::clamp(other.min, min, max);
@@ -80,7 +74,6 @@ bool Collision::checkCollision(Collision& other)
         float distance = glm::distance(closestPoint, other.min);
         if(distance <= other.Radius)
         {
-            std::cout << "Collision" << std::endl;
             other.sphere->GetPosition() = closestPoint + (other.Radius * glm::normalize(other.min - closestPoint));
             resolveCollision(other, normalize(other.min - closestPoint));
             return true;
