@@ -34,7 +34,7 @@ void Camera::setPlayerPos(glm::vec3 position) {
 
 glm::vec3 Camera::OrbitCamera()
 {
-    cameraPos = glm::vec3(PlayerPos.x,PlayerPos.y,PlayerPos.z) + cameraFront * -5.f;
+    cameraPos = glm::vec3(PlayerPos.x,PlayerPos.y,PlayerPos.z) + cameraFront * -10.f;
     return cameraPos;
 }
 

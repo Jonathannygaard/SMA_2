@@ -33,7 +33,7 @@ void Application::create() {
 	Player.CreateCube(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.75f, 1.3f, 0.75f), Color::Purple);
 	Player.bIsPlayer = true;
 	Player.AddCollider(glm::vec3(0.75f, 1.3f, 0.75f), ECollisionType::Player, glm::vec3(0.f));
-	Player.AddCollider(glm::vec3(1.75f, 1.55f, 1.75f), ECollisionType::Interact, glm::vec3(-0.5f));
+	Player.AddCollider(glm::vec3(1.55f, 1.55f, 1.55f), ECollisionType::Interact, glm::vec3(-0.4f, 0.f, 0.4f));
 	MouseInput::player = &Player;
 
 	sphere.CreateSphere(1.f, 1.f,16,16, glm::vec3(-10.f,10.f,0.f), glm::vec3(1.f), Color::Green);
@@ -51,19 +51,28 @@ void Application::create() {
 	sphere5.CreateSphere(1.f,1.f,16,16, glm::vec3(3.f,10.f,7.f), glm::vec3(1.f), Color::Pink);
 	sphere5.AddCollider(1.f, ECollisionType::Sphere, glm::vec3(0.f));
 
-	Floor.CreateCube(glm::vec3(-20.f,-0.5f,10.f), glm::vec3(40.f, 0.5f, 20.f), Color::Olive);
-	Floor.AddCollider(glm::vec3(40.f, 0.5f, 20.f), ECollisionType::Wall, glm::vec3(0.f));
+	sphere6.CreateSphere(1.f,1.f,16,16, glm::vec3(3.f,10.f,-10.f), glm::vec3(1.f), Color::Blue);
+	sphere6.AddCollider(1.f, ECollisionType::Sphere, glm::vec3(0.f));
 
-	Wall.CreateCube(glm::vec3(20.f,0.f,10.f), glm::vec3(1.f, 2.f, 20.f), Color::Red);
-	Wall.AddCollider(glm::vec3(1.f,2.f,20.f), ECollisionType::Wall, glm::vec3(0.f));
+	sphere7.CreateSphere(1.f,1.f,16,16, glm::vec3(3.f,10.f,20.f), glm::vec3(1.f), Color::Coral);
+	sphere7.AddCollider(1.f, ECollisionType::Sphere, glm::vec3(0.f));
 
-	Wall2.CreateCube(glm::vec3(-20.f,0.f,10.f), glm::vec3(40.f, 2.f, 1.f), Color::Red);
+	sphere8.CreateSphere(1.f,1.f,16,16, glm::vec3(3.f,10.f,15.f), glm::vec3(1.f), Color::Magenta);
+	sphere8.AddCollider(1.f, ECollisionType::Sphere, glm::vec3(0.f));
+
+	Floor.CreateCube(glm::vec3(-20.f,-0.5f,40.f), glm::vec3(40.f, 0.5f, 80.f), Color::Olive);
+	Floor.AddCollider(glm::vec3(40.f, 0.5f, 80.f), ECollisionType::Wall, glm::vec3(0.f));
+
+	Wall.CreateCube(glm::vec3(20.f,0.f,40.f), glm::vec3(1.f, 2.f, 80.f), Color::Red);
+	Wall.AddCollider(glm::vec3(1.f,2.f,80.f), ECollisionType::Wall, glm::vec3(0.f));
+
+	Wall2.CreateCube(glm::vec3(-20.f,0.f,40.f), glm::vec3(40.f, 2.f, 1.f), Color::Red);
 	Wall2.AddCollider(glm::vec3(40.f, 2.f, 1.f), ECollisionType::Wall, glm::vec3(0.f));
 
-	Wall3.CreateCube(glm::vec3(-20.f,0.f,10.f), glm::vec3(1.f, 2.f, 20.f), Color::Red);
-	Wall3.AddCollider(glm::vec3(1.f, 2.f, 20.f), ECollisionType::Wall, glm::vec3(0.f));
+	Wall3.CreateCube(glm::vec3(-20.f,0.f,40.f), glm::vec3(1.f, 2.f, 80.f), Color::Red);
+	Wall3.AddCollider(glm::vec3(1.f, 2.f, 80.f), ECollisionType::Wall, glm::vec3(0.f));
 
-	Wall4.CreateCube(glm::vec3(-20.f,0.f,-10.f), glm::vec3(40.f, 2.f, 1.f), Color::Red);
+	Wall4.CreateCube(glm::vec3(-20.f,0.f,-40.f), glm::vec3(40.f, 2.f, 1.f), Color::Red);
 	Wall4.AddCollider(glm::vec3(40.f, 2.f, 1.f), ECollisionType::Wall, glm::vec3(0.f));
 	
 }

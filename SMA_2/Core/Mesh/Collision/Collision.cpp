@@ -21,8 +21,7 @@ Collision::Collision(glm::vec3 position, glm::vec3 scale, glm::vec3 offset, ECol
     AllCollision.push_back(std::make_shared<Collision>(*this));
 }
 
-Collision::Collision(glm::vec3 position, float radius, glm::vec3 offset, ECollisionType collision_type,
-    Sphere* realSphere)
+Collision::Collision(glm::vec3 position, float radius, glm::vec3 offset, ECollisionType collision_type, Sphere* realSphere)
 {
     min = position + offset;
     Radius = radius;
@@ -60,7 +59,7 @@ bool Collision::checkCollision(Collision& other)
         {
             if(cube->bInteracted)
             {
-                glm::vec3 normal = glm::normalize(other.min - closestPoint);
+                glm::vec3 normal = glm::normalize(other.min - min);
                 float Impulse = 5.f;
                 other.sphere->Speed = normal * Impulse;
                 return true;

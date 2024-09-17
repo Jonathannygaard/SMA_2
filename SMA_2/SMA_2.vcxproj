@@ -161,6 +161,7 @@
     <ClCompile Include="Core\Camera\Camera.cpp" />
     <ClCompile Include="Core\Input\Input.cpp" />
     <ClCompile Include="Core\Mesh\Collision\Collision.cpp" />
+    <ClCompile Include="Core\Mesh\Collision\CollisionTree.cpp" />
     <ClCompile Include="Core\Mesh\Mesh.cpp" />
     <ClCompile Include="Core\Mesh\NPC\NPC.cpp" />
     <ClCompile Include="Core\Shader\Buffers\Buffers.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="Core\Color.h" />
     <ClInclude Include="Core\Input\Input.h" />
     <ClInclude Include="Core\Mesh\Collision\Collision.h" />
+    <ClInclude Include="Core\Mesh\Collision\CollisionTree.h" />
     <ClInclude Include="Core\Mesh\Mesh.h" />
     <ClInclude Include="Core\Mesh\NPC\NPC.h" />
     <ClInclude Include="Core\Shader\Buffers\Buffers.h" />

@@ -27,6 +27,9 @@ public:
     Sphere sphere3;
     Sphere sphere4;
     Sphere sphere5;
+    Sphere sphere6;
+    Sphere sphere7;
+    Sphere sphere8;
 
     Cube Floor;
     Cube Wall;
