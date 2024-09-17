@@ -6,6 +6,7 @@
 #define APPLICATION_H
 #include "Camera/Camera.h"
 #include "Mesh/Mesh.h"
+#include "Mesh/Actor.h"
 
 
 //class VertexBuffer;
