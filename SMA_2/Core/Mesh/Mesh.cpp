@@ -4,24 +4,14 @@
 #include <glad/glad.h>
 #include <iostream>
 #include <windows.h>
-
 #include "../Application.h"
 #include "../Shader/Shader.h"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtx/transform.hpp"
 #include "../Color.h"
 
-std::vector<Sphere*> Mesh::AllSpheres;
-std::vector<Cube*> Mesh::AllCubes;
-
-void Cube::CreateCube(glm::vec3 position, glm::vec3 scale, glm::vec3 color, bool isPickup, bool isPlayer, glm::vec3 rotation, bool isDoor)
+void Cube::Create(glm::vec3 color)
 {
-	Position = position;
-	Scale = scale;
-	bIsPlayer = isPlayer;
-	bIsPickup = isPickup;
-	bIsDoor = isDoor;
-
 	Vertex v0{glm::vec3(0.f, 0.f, 0.f), color}; /* Front-Bot-left */
 	Vertex v1{ glm::vec3(1.f, 0.f, 0.f), color}; /* Front-Bot-right */
 	Vertex v2{ glm::vec3(1.f, 1.f, 0.f), color}; /* Front-Top-right */
@@ -72,30 +62,16 @@ void Cube::CreateCube(glm::vec3 position, glm::vec3 scale, glm::vec3 color, bool
 		cVertices[Triangles.b].Normal += Normal;
 		cVertices[Triangles.c].Normal += Normal;
 	}
-	Mesh::AllCubes.push_back(this);
 	BindBuffers();
 }
 
-void Cube::Draw()
+void Cube::Draw(glm::mat4 model)
 {
-	glm::mat4 model = glm::mat4(1.f);
-	model = glm::translate(model, GetPosition());
-	model = glm::scale(model, GetScale());
 	glUniformMatrix4fv(glGetUniformLocation(Shader::Program, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(model));
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, cIndices.size()*3, GL_UNSIGNED_INT, nullptr);
 	glBindVertexArray(0);
 
-}
-
-void Cube::AddCollider(glm::vec3 scale, ECollisionType collisionType, glm::vec3 offset)
-{
-	Colliders.push_back(std::make_unique<Collision>(GetPosition(),scale, offset,collisionType,this));
-}
-
-void Cube::MoveNPC(Cube& NPC, glm::vec3 pos)
-{
-	NPC.Position = pos;
 }
 
 Cube::~Cube()
@@ -131,13 +107,8 @@ void Cube::BindBuffers()
 	glBindVertexArray(0);
 }
 
-void Sphere::CreateSphere(float radius,float mass, int Sectors,int Stacks, glm::vec3 position, glm::vec3 scale, glm::vec3 color)
+void Sphere::Create(glm::vec3 color)
 {
-	Position = position;
-	Scale = scale;
-	Radius = radius;
-	Mass = mass;
-	
 	float x, y, z, xy;
 	float SectorStep = 2 * glm::pi<float>() / Sectors;
 	float StackStep = glm::pi<float>() / Stacks;
@@ -182,31 +153,15 @@ void Sphere::CreateSphere(float radius,float mass, int Sectors,int Stacks, glm::
 			}
 		}
 	}
-	Mesh::AllSpheres.push_back(this);
 	BindBuffers();	
 }
 
-void Sphere::Draw()
+void Sphere::Draw(glm::mat4 model)
 {
-	glm::mat4 model = glm::mat4(1.f);
-	model = glm::translate(model, GetPosition());
-	model = glm::scale(model, GetScale());
 	glUniformMatrix4fv(glGetUniformLocation(Shader::Program, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(model));
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, sIndices.size()*3, GL_UNSIGNED_INT, nullptr);
 	glBindVertexArray(0);
-}
-
-void Sphere::AddCollider(float radius, ECollisionType collisionType, glm::vec3 offset)
-{
-	Collider = std::make_unique<Collision>(GetPosition(),radius, offset,collisionType,this);
-}
-
-void Sphere::Update()
-{
-	Speed.y += -9.81f * Application::DeltaTime;
-	Position += Speed * Application::DeltaTime;
-	Collider->UpdatePosition(Position);
 }
 
 void Sphere::BindBuffers()
@@ -236,159 +191,4 @@ void Sphere::BindBuffers()
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-}
-
-
-void Mesh::BindBuffers()
-{
-	// VBO
-	glGenBuffers(1, &VBO);
-
-	// VAO
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-
-	// EBO
-	glGenBuffers(1, &EBO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, mVertices.size() * sizeof(Vertex), mVertices.data(), GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, tIndices.size() * sizeof(Triangles), tIndices.data(), GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, Pos)));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, Color)));
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, Normal)));
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-}
-
-float Mesh::f(float x)
-{
-	return x * x * x - 2 * x;
-}
-
-void Mesh::CreateCurve(Mesh ThePlane)
-{
-	for (float i = -20; i < 20; i += 0.1)
-	{
-		float x = i;
-		float y = 0;
-		float z = f(i);
-
-
-		glm::vec3 Temp(x, y, z);
-		if (FindTerrainHeight(Temp)) 
-		{
-			mVertices.emplace_back(Temp, Color::Red);
-		}
-
-	}
-	BindBuffers();
-}
-
-
-float Mesh::xy(float t, float u)
-{
-	return cos(t) + sin(u);
-}
-
-void Mesh::CreateTerrain(float xStart, float yStart, float xEnd, float yEnd, float Step)
-{
-	float xLength = 0.f;
-	float zLength = 0.f;
-
-	for (float i = xStart; i < xEnd; i += Step)
-	{
-		xLength++;
-		for (float j = yStart; j < yEnd; j += Step)
-		{
-			if(i == xStart)
-			{
-				zLength++;
-			}
-			mVertices.emplace_back(glm::vec3(i, 0.f, j), Color::Coral);
-		}
-	}
-	float index = 1;
-	
-	for(int x = 0; x < xLength - 1; x++)
-	{
-			for (int z = 0; z < zLength - 1; z++)
-			{
-				tIndices.emplace_back(x * zLength + z, index * zLength + z, index * zLength + z + 1);
-				tIndices.emplace_back(index * zLength + z + 1, x * zLength + z + 1, x * zLength + z);
-			}
-			index++;
-	}
-	for (auto Triangles: tIndices)
-	{
-		glm::vec3 Normal = glm::normalize(glm::cross(mVertices[Triangles.c].Pos - mVertices[Triangles.a].Pos,
-			mVertices[Triangles.b].Pos - mVertices[Triangles.a].Pos));
-		mVertices[Triangles.a].Normal += Normal;
-		mVertices[Triangles.b].Normal += Normal;
-		mVertices[Triangles.c].Normal += Normal;
-	}
-	BindBuffers();
-}
-
-void Mesh::Draw()
-{
-	
-	glm::mat4 model(1.f);
-	model = glm::translate(model, glm::vec3(0.f));
-	glBindVertexArray(VAO);
-	glUniformMatrix4fv(glGetUniformLocation(Shader::Program, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(model));
-	
-	if(!isLine)
-	{
-		glDrawElements(GL_TRIANGLES, tIndices.size()*3, GL_UNSIGNED_INT, nullptr);
-	}
-	if (isLine)
-	{
-		glDrawArrays(GL_LINE_STRIP, 0, mVertices.size());
-	}
-	glBindVertexArray(0);
-	
-}
-
-float Mesh::calculate_Normal(const glm::vec3&& AB, const glm::vec3&& AC)
-{
-	return AB[0] * AC[2] - AC[0] * AB[2];
-}
-
-bool Mesh::FindTerrainHeight(glm::vec3& Player)
-{
-	glm::vec3 p1, p2, p3,player, temp;
-	for(auto Triangle: tIndices)
-	{
-		p1 = mVertices[Triangle.a].Pos;
-		p2 = mVertices[Triangle.b].Pos;
-		p3 = mVertices[Triangle.c].Pos;
-		player = Player;
-
-		float tArea = glm::length(calculate_Normal(p2-p1, p3-p1));
-
-		float u = (calculate_Normal(p2 - player, p3 - player)) / tArea;
-		float v = (calculate_Normal(p3 - player, p1 - player)) / tArea;
-		float w = (calculate_Normal(p1 - player, p2 - player)) / tArea;
-
-		if (w >= 0 && v >= 0 && u >= 0)
-		{
-			float xCoord = u * p1.x + v * p2.x + w * p3.x;
-			float yCoord = u * p1.y + v * p2.y + w * p3.y;
-			float zCoord = u * p1.z + v * p2.z + w * p3.z;
-			//Player.y = yCoord;
-			if(player.y <= yCoord)
-			{
-				return true;
-			}
-		}
-	}
-	return false;
 }

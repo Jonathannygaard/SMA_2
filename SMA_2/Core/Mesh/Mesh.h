@@ -44,25 +44,14 @@ public:
     std::vector<GLuint> mIndices;
     std::vector<Triangles> tIndices;
     std::vector<std::shared_ptr<Cube>> Package;
-    static std::vector<Sphere*> AllSpheres;
-    static std::vector<Cube*> AllCubes;
 
 	bool isTarrain = false;
     bool isLine = false;
 
-     float xy(float t, float u);
-	void CreateTerrain(float xStart, float yStart, float xEnd, float yEnd, float Step);
+    virtual void Draw(glm::mat4 model);
+    virtual void Create(glm::vec3 color);
 
-    void Draw();
-
-    float calculate_Normal(const glm::vec3&& AB, const glm::vec3&& AC);
-
-    bool FindTerrainHeight(glm::vec3& Player);
-
-    void BindBuffers();
-
-    static float f(float x);
-    void CreateCurve(Mesh ThePlane);
+    virtual void BindBuffers();
 
     unsigned int VAO;
 private:
@@ -72,11 +61,8 @@ private:
 };
 
 
-class Cube{
-    int index = 0;
-    glm::vec3 Position;
-    glm::vec3 Scale;
-    glm::vec3 Rotation;
+class Cube : Mesh
+{
 
 public:
     Cube()
@@ -94,20 +80,12 @@ public:
 
     Cube* OverlappedCube = nullptr;
 
-    void CreateCube(glm::vec3 position, glm::vec3 scale, glm::vec3 color, bool isPickup = false, bool isPlayer = false, glm::vec3 rotation = glm::vec3(0.f), bool isDoor = false);
-    void Draw();
-
-    std::vector<std::shared_ptr<Collision>> Colliders;
-    //std::shared_ptr<Collision> Collider;
-    glm::vec3& GetPosition() { return Position; }
-    glm::vec3& GetScale() { return Scale; }
-    glm::vec3& GetRotation() { return Rotation; }
-    int& GetIndex() { return index; }
-    void AddCollider(glm::vec3 scale,ECollisionType collisionType, glm::vec3 offset = glm::vec3(0.f));
-    void MoveNPC(Cube& NPC, glm::vec3 pos);
+    void Create(glm::vec3 color) override;
+    void Draw(glm::mat4 model) override;
+    
     virtual ~Cube();
 
-    void BindBuffers();
+    void BindBuffers() override;
 
 	unsigned int VAO;
 private:
@@ -119,13 +97,16 @@ private:
     std::vector<Triangles> cIndices;
 };
 
-class Sphere
+class Sphere : Mesh
 {
     int index = 0;
-    glm::vec3 Position;
-    glm::vec3 Scale;
-    glm::vec3 Rotation;
-   
+    
+    // How detailed the sphere is
+    int Sectors = 16; 
+    int Stacks = 16;
+
+    //Radius of the sphere
+    float radius = 1.f;
 
 public:    
     Sphere()
@@ -138,15 +119,10 @@ public:
     glm::vec3 Speed = glm::vec3(0.f);
 
     std::shared_ptr<Collision> Collider;
-
-    glm::vec3& GetPosition() { return Position; }
-    glm::vec3& GetScale() { return Scale; }
-
-    void CreateSphere(float radius,float mass, int Sectors, int Stacks,glm::vec3 position, glm::vec3 scale, glm::vec3 color);
-    void Draw();
-    void AddCollider(float radius, ECollisionType collisionType, glm::vec3 offset = glm::vec3(0.f));
-    void Update();
-    void BindBuffers();
+    
+    void Create(glm::vec3 color) override;
+    void Draw(glm::mat4 model) override;
+    void BindBuffers() override;
 
     unsigned int VAO;
 private:
